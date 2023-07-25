@@ -35,10 +35,10 @@ def plot_histogram(df, col, df_name):
     >>>Histogram Sub-plots for col1
     >>>Subplot 1
     >>>Subplot 2
-    '''
+    """
     
-    assert(isinstance(df, pd.DataFrame), "Passed object is not a DataFrame")
-    assert(isinstance(col, string),"Passed object is not a string")
+    assert isinstance(df, pd.DataFrame), "Passed object is not a DataFrame"
+    assert isinstance(col, str),"Passed object is not a string"
     
     
     print(f"===== Distribution Plots for {col} =====")
