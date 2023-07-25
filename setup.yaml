@@ -1,0 +1,98 @@
+# Specify version of docker-compose for backwards compatability
+version: '3.8'
+
+# Define services (docker containers) to run
+services:
+  
+  # Define a container named mysql to run MySQL DBMS
+  mysql:
+
+    # Specify image tag to reference, refer to Docker Hub https://hub.docker.com/_/mysql
+    image: mysql:8.0
+
+    # Tells Docker to restart container if fail
+    restart: always
+
+    # Define environment variables, different for each image
+    environment:
+      # rootroot was used in this case as an example
+      MYSQL_ROOT_PASSWORD: rootroot
+
+    # Define ports for communication between host (left) and container(right)
+    ports:
+      - '3306:3306'
+
+    # Define volumne to write data to for data persistence when container restarts
+    # Local host directory (left) : directory in container (right)
+    volumes:
+      - documents_mysql_db_data:/var/lib/mysql
+
+  # Define a container to run phpMyAdmin
+  phpmyadmin:
+
+    # Specify phpmyadmin to run after mysql has started
+    depends_on:
+      - mysql
+
+    # Specify image tag to reference, refer to Docker Hub https://hub.docker.com/_/phpmyadmin
+    image: phpmyadmin:5.2
+
+    # Tells Docker to restart container if fail
+    restart: always
+
+    # Define ports for communication between host (left) and container(right)
+    ports:
+      - '8080:80'
+
+    # Define link from mysql container to phpmyadmin container
+    links:
+      - mysql:db
+
+  # Define jupyter lab to run in same environment
+  pyspark:
+
+    depends_on:
+      - phpmyadmin
+    
+    image: dev
+    
+    build: ./pyspark_2023_07_10
+
+    restart: always
+
+    ports:
+      # Port to access notebook
+      - '10000:8888'
+
+      # Port to access SparkUI (Spark Monitoring and Instrumentation UI)
+      - '4040:4040'
+
+  # # Define streamlit app to run
+  # streamlit:
+
+  #   depends_on:
+  #     - pyspark
+    
+  #   image: streamlit_example
+    
+  #   build: ./streamlit_2023_07_10
+
+  #   restart: always
+
+    # Volume for notebook is current working directory
+    volumes:
+      - ${PWD}:/home/jovyan/work
+
+# Define Docker volumes to store data
+volumes:
+
+  # Specify volume name
+  documents_mysql_db_data:
+
+    # Tell docker to refer to pre-created volumne that is outside this container's scope
+    external: true
+    
+    # Tells docker that volume is stored on local computer
+    #driver: local 
+
+  
