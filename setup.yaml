@@ -67,21 +67,19 @@ services:
       # Port to access SparkUI (Spark Monitoring and Instrumentation UI)
       - '4040:4040'
 
-  # # Define streamlit app to run
-  # streamlit:
-
-  #   depends_on:
-  #     - pyspark
-    
-  #   image: streamlit_example
-    
-  #   build: ./streamlit_2023_07_10
-
-  #   restart: always
-
-    # Volume for notebook is current working directory
     volumes:
       - ${PWD}:/home/jovyan/work
+
+  streamlit-app:
+    depends_on:
+      - pyspark
+    image: expenditure_app
+    build: ./
+    ports:
+      - '8501:8501'
+    volumes:
+      - ${PWD}:/app
+
 
 # Define Docker volumes to store data
 volumes:
