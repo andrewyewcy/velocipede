@@ -265,7 +265,7 @@ fig.update_layout(
      title = dict(
          text = f"Number of Bixi Trips by Year",
          x = 0.5,
-         y = 0.85,
+         y = 0.95,
          xanchor = 'center',
          yanchor = 'top'
      ),
@@ -283,9 +283,12 @@ fig.update_layout(
         title = f"Number of Bixi Trips (millions)",
         titlefont_size = 14,
         tickfont_size = 12
-    )
-    
+    )   
 )
+
+fig.layout.legend.orientation = 'h'
+fig.layout.legend.yanchor = 'bottom'
+fig.layout.legend.y = 1.01
 
 #################
 # END OF PLOT 1 #
@@ -348,7 +351,7 @@ fig.update_layout(
      title = dict(
          text = f"Number of Bixi Trips by Month",
          x = 0.5,
-         y = 0.85,
+         y = 0.95,
          xanchor = 'center',
          yanchor = 'top'
      ),
@@ -369,6 +372,10 @@ fig.update_layout(
         tickfont_size = 12
     )
 )
+
+fig.layout.legend.orientation = 'h'
+fig.layout.legend.yanchor = 'bottom'
+fig.layout.legend.y = 1.01
 
 #################
 # END OF PLOT 2 #
@@ -451,7 +458,7 @@ fig.update_layout(
      title = dict(
          text = f"Number of Bixi Trips by Trip Duration",
          x = 0.5,
-         y = 0.85,
+         y = 0.95,
          xanchor = 'center',
          yanchor = 'top'
      ),
@@ -473,6 +480,9 @@ fig.update_layout(
     )
 )
 
+fig.layout.legend.orientation = 'h'
+fig.layout.legend.yanchor = 'bottom'
+fig.layout.legend.y = 1.01
 
 #################
 # END OF PLOT 3 #
@@ -544,7 +554,7 @@ fig = px.scatter_mapbox(
 
 fig.layout.coloraxis.colorbar.title.text = "Avg. Trip<br>Dur. (min)"
 fig.layout.title.x = 0.3
-fig.layout.title.y = 0.85
+fig.layout.title.y = 0.95
 #################
 # END OF PLOT 4 #
 #################
