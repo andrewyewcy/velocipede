@@ -1,6 +1,9 @@
-#################
-# IMPORT PACKAGES
-#################
+# Author: Andrew Yew
+# Date: 2023-08-10
+
+###################
+# IMPORT PACKAGES #
+###################
 import joblib
 import numpy as np
 import pandas as pd
@@ -8,10 +11,17 @@ import datetime as dt
 import streamlit as st
 import plotly.graph_objects as go
 import plotly.express as px
+# import pyautogui
 
-##########################
-# CONFIGURE STREAMLIT PAGE
-##########################
+# create a function that sets the value in state back to an empty list
+def clear_multi():
+    st.session_state.multiselect = [2014,2015,2016,2017]
+    st.session_state.stations = "All Stations"
+    return
+
+############################
+# CONFIGURE STREAMLIT PAGE #
+############################
 st.set_page_config(
     page_title            = "Velocipede, a bike-share dashboard",
     page_icon             = "bicycle",
@@ -24,6 +34,20 @@ st.set_page_config(
     }
 )
 
+st.markdown(
+    """
+        <style>
+            .appview-container .main .block-container {{
+                padding-top: {padding_top}rem;
+                padding-bottom: {padding_bottom}rem;
+                }}
+
+        </style>""".format(
+        padding_top=1, padding_bottom=1
+    ),
+    unsafe_allow_html=True,
+)
+
 #########################
 # Filters for Dashboard #
 #########################
@@ -34,16 +58,30 @@ df = pd.read_csv(
 )
 
 with st.sidebar:
+
+    st.button("Reset filters", on_click = clear_multi)
+
     selected_year = st.multiselect(
         "Select Year",
         options = ['Select All Years'] + df['yyyy'].unique().tolist(),
-        default = [2014,2015,2016,2017]
+        default = [2014,2015,2016,2017],
+        key = "multiselect"
     )
-
+    
     selected_stations = st.radio(
         "Select Stations",
-        options = ["All Stations", "Top 10 Stations"]
+        options = ["All Stations", "Top 10 Stations"],
+        key = "stations"
     )
+
+    st.write("**About this dashboard:**")
+    st.write("The dashboard analyzes 35 million Bixi bike-share trips from 2014 to 2021 and is hosted on AWS as a Docker containerized application.")
+    st.write("The data for the dashboard was obtained from [Bixi](https://bixi.com/en/open-data-2/).")
+    st.write("For comments and documentation, the creator, **Andrew Yew**, can be contacted via the below channels:")
+    st.write("[LinkedIn](www.linkedin.com/in/andrewyewcy)")
+    st.write("[GitHub](https://github.com/andrewyewcy)")
+    st.write("[Project Specific GitHub](https://github.com/andrewyewcy/velocipede)")
+    st.write("[Website/Blog](andrewyewcy.com)")
 
 if selected_stations == "All Stations":
     df = df
@@ -62,6 +100,28 @@ if "Select All Years" in selected_year:
 else:
     cond = df['yyyy'].isin(selected_year)
     df = df.loc[cond]
+
+
+##########
+# Header #
+##########
+body = "Showing years: "
+
+if "Select All Years" in selected_year:
+    body = "Showing years: 2014 - 2021"
+else:
+    for index, year in enumerate(selected_year):
+        if index == len(selected_year) - 1:
+            body += "and " + str(year)
+        else:
+            body += str(year) + ', '
+    
+body += ' for ' + selected_stations
+
+st.subheader(
+    body = body,
+    anchor = False
+)
 
 col1, col2 = st.columns(2, gap = "small")
 
@@ -103,12 +163,19 @@ hovertemplate = "<br>".join(
     ]
 )
 
+texttemplate = "<br>".join(
+    [
+        "%{y:.2f}"
+    ]
+)
+
 fig.add_trace(
         go.Bar(
             name = "Total trips",
             x = x,
             y = plot_df['total'] / 1_000_000, # Numbers in millions of rides
             hovertemplate = hovertemplate,
+            texttemplate = texttemplate,
             marker_color = "cornflowerblue"
         )
 )
@@ -119,8 +186,14 @@ customdata = np.transpose([x,plot_df['membership_pct'].tolist()])
 hovertemplate = "<br>".join(
     [
         "by Members: %{y:.2f} M",
-        "% of total: %{customdata[1]:.2%}",
+        "% of year: %{customdata[1]:.2%}",
         "<extra></extra>"
+    ]
+)
+
+texttemplate = "<br>".join(
+    [
+        "%{y:.2f}"
     ]
 )
 
@@ -131,6 +204,7 @@ fig.add_trace(
             y = plot_df[1]/ 1_000_000,
             customdata = customdata,
             hovertemplate = hovertemplate,
+            texttemplate = texttemplate,
             marker_color = "cornflowerblue",
             marker_pattern_shape = "/"
         )
@@ -141,8 +215,14 @@ customdata = np.transpose([x,[1 - val for val in plot_df['membership_pct'].tolis
 hovertemplate = "<br>".join(
     [
         "by Non-members: %{y:.2f} M",
-        "% of total: %{customdata[1]:.2%}",
+        "% of year: %{customdata[1]:.2%}",
         "<extra></extra>"
+    ]
+)
+
+texttemplate = "<br>".join(
+    [
+        "%{y:.2f}"
     ]
 )
 
@@ -153,15 +233,26 @@ fig.add_trace(
             y = plot_df[0]/ 1_000_000,
             customdata = customdata,
             hovertemplate = hovertemplate,
+            texttemplate = texttemplate,
             marker_color = "cornflowerblue",
             marker_pattern_shape = "+"
         )
+)
+
+# Update the display settings for text on bar chart
+fig.update_traces(
+    textfont_size = 12,
+    textangle = 90,
+    textposition = 'outside',
+    # The cliponaxis attribute is set to False in the example below to ensure that the outside text on the tallest bar is allowed to render outside of the plotting area
+    cliponaxis = False,
 )
 
 ## Format x, y axis titles, title
 fig.update_layout(
     barmode = 'group',
     hovermode = "x unified",
+    # margin=dict(l=0, r=0, t=0, b=0),
     
     # Set uniform minimum textsize and force show
     # For max size, refer to textfont_size in update_traces
@@ -229,16 +320,16 @@ for year in plot_df['yyyy'].unique():
     customdata = np.transpose([x,pct_yr_total])
     
     hovertemplate = "<b>%{text} </b>" + "Trips: %{y:,.0f} K" + ",  % of year: %{customdata[1]:.2%}" + "<extra></extra>"
-        
-
+    
     fig.add_trace(
         go.Scatter(
             name = str(year), 
             x = x, 
             y = y,
+            # mode = "lines+markers+text",
             hovertemplate = hovertemplate,
             customdata = customdata,
-            text = [year] * len(x)
+            text = [year] * len(x),
         )
     )
 
@@ -316,7 +407,14 @@ for year in plot_df['yyyy'].unique():
     customdata = np.transpose([x,pct_yr_total])
 
     hovertemplate = "<b>%{text} </b>" + "Trips: %{y:,.2f} M" + ",  % of year: %{customdata[1]:.2%}" + "<extra></extra>"
-    
+
+    texttemplate = "<br>".join(
+        [
+            "%{y:.2f}"
+        ]
+    )
+
+
     fig.add_trace(
             go.Bar(
                 name = str(year),
@@ -324,10 +422,10 @@ for year in plot_df['yyyy'].unique():
                 y = y, # Numbers in millions of rides,
                 hovertemplate = hovertemplate,
                 customdata = customdata,
+                texttemplate = texttemplate,
                 text = [year] * len(x)
             )
     )
-
 
 fig.update_layout(
     barmode = 'group',
@@ -342,7 +440,7 @@ fig.update_layout(
 
     # Set title properties
      title = dict(
-         text = f"Trip Duration",
+         text = f"Number of Trips by Trip Duration",
          x = 0.5,
          y = 0.85,
          xanchor = 'center',
@@ -351,7 +449,7 @@ fig.update_layout(
 
     # Set xaxis properties
     xaxis = dict(
-        title = "Trip duration (min)",
+        title = "Trip Duration (min)",
         #titlefont_size = 14,
         tickfont_size = 12,
         #tickangle = -90,
@@ -365,6 +463,7 @@ fig.update_layout(
         tickfont_size = 12
     )
 )
+
 
 #################
 # END OF PLOT 3 #
@@ -403,10 +502,12 @@ plot_df.rename(
         "stn_lon"     : "Lon",
         "rides"       : "Trips",
         "stn_name"    : "Station Name",
-        "avg_dur_sec" : "Avg. Trip Duration"
+        "avg_dur_sec" : "Avg. Trip Duration (min)"
     },
     inplace = True
 )
+
+plot_df['Avg. Trip Duration (min)'] = plot_df['Avg. Trip Duration (min)']/60 
 
 px.set_mapbox_access_token(open(".mapbox_token").read())
 
@@ -417,18 +518,24 @@ fig = px.scatter_mapbox(
     text = "Station Name",
     hover_name = "Station Name",
     hover_data = {
-        "Trips"              : ":,",
-        "Lat"                : ":.3f",
-        "Lon"                : ":.3f",
-        "Avg. Trip Duration" : ":,.0f"
+        "Trips"                    : ":,",
+        "Lat"                      : ":.3f",
+        "Lon"                      : ":.3f",
+        "Avg. Trip Duration (min)" : ":,.0f",
+        "Station Name"             : False
     },
     size = "Trips",
     size_max = 15,
-    color = "Avg. Trip Duration",
-    zoom = 12,
-    mapbox_style = 'light',
+    color = "Avg. Trip Duration (min)",
+    zoom = 11,
+    color_continuous_scale = "Oryel",
+    # mapbox_style = 'dark',
     animation_frame = 'Year')
         
+#################
+# END OF PLOT 4 #
+#################
+
 col2.plotly_chart(
     fig,
     use_container_width = True,

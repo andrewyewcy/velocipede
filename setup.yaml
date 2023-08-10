@@ -73,7 +73,7 @@ services:
   streamlit-app:
     depends_on:
       - pyspark
-    image: expenditure_app
+    image: velocipede_dashboard
     build: ./
     ports:
       - '8501:8501'
