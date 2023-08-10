@@ -242,7 +242,7 @@ fig.add_trace(
 # Update the display settings for text on bar chart
 fig.update_traces(
     textfont_size = 12,
-    textangle = 90,
+    # textangle = 90,
     textposition = 'outside',
     # The cliponaxis attribute is set to False in the example below to ensure that the outside text on the tallest bar is allowed to render outside of the plotting area
     cliponaxis = False,
@@ -427,6 +427,15 @@ for year in plot_df['yyyy'].unique():
             )
     )
 
+# Update the display settings for text on bar chart
+fig.update_traces(
+    textfont_size = 12,
+    # textangle = 90,
+    textposition = 'outside',
+    # The cliponaxis attribute is set to False in the example below to ensure that the outside text on the tallest bar is allowed to render outside of the plotting area
+    cliponaxis = False,
+)
+
 fig.update_layout(
     barmode = 'group',
     hovermode = 'x unified',
@@ -516,6 +525,7 @@ fig = px.scatter_mapbox(
     lat = "Lat",
     lon = "Lon",
     text = "Station Name",
+    title = "Number of Bixi Trips by Station",
     hover_name = "Station Name",
     hover_data = {
         "Trips"                    : ":,",
@@ -531,7 +541,10 @@ fig = px.scatter_mapbox(
     color_continuous_scale = "Oryel",
     # mapbox_style = 'dark',
     animation_frame = 'Year')
-        
+
+fig.layout.coloraxis.colorbar.title.text = "Avg. Trip<br>Dur. (min)"
+fig.layout.title.x = 0.3
+fig.layout.title.y = 0.85
 #################
 # END OF PLOT 4 #
 #################
