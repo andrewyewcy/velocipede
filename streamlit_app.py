@@ -75,7 +75,7 @@ with st.sidebar:
     )
 
     st.write("**About this dashboard:**")
-    st.write("The dashboard analyzes 35 million Bixi bike-share trips from 2014 to 2021 and is hosted on AWS as a Docker containerized application.")
+    st.write("The dashboard analyzes 35 million Bixi bicycle rental trips from 2014 to 2021 and is hosted on AWS as a Docker containerized application.")
     st.write("The data for the dashboard was obtained from [Bixi](https://bixi.com/en/open-data-2/).")
     st.write("For comments and documentation, the creator, **Andrew Yew**, can be contacted via the below channels:")
     st.write("[LinkedIn](www.linkedin.com/in/andrewyewcy)")
@@ -105,10 +105,10 @@ else:
 ##########
 # Header #
 ##########
-body = "Showing years: "
+body = "Showing Bixi Bicycle Rental Trips for Years: "
 
 if "Select All Years" in selected_year:
-    body = "Showing years: 2014 - 2021"
+    body = "Showing Bixi Bicycle Rental Trips for Years: 2014 - 2021"
 else:
     for index, year in enumerate(selected_year):
         if index == len(selected_year) - 1:
@@ -440,7 +440,7 @@ fig.update_layout(
 
     # Set title properties
      title = dict(
-         text = f"Number of Trips by Trip Duration",
+         text = f"Number of Bixi Trips by Trip Duration",
          x = 0.5,
          y = 0.85,
          xanchor = 'center',

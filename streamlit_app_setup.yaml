@@ -1,0 +1,13 @@
+# Specify version of docker-compose for backwards compatability
+version: '3.8'
+
+# Define services (docker containers) to run
+services:
+
+  streamlit-app:
+    image: velocipede_dashboard
+    build: ./
+    ports:
+      - '8501:8501'
+    volumes:
+      - ${PWD}:/app
