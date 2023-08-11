@@ -7,6 +7,7 @@ services:
   streamlit-app:
     image: velocipede_dashboard
     build: ./
+    restart: always
     ports:
       - '8501:8501'
     volumes:
