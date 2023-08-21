@@ -1,23 +1,18 @@
+# This Python script is used to generate the Velocipede dashboard on http://3.96.175.190:8501/
 # Author: Andrew Yew
-# Date: 2023-08-10
+# Date: 2023-08-21
+# Contact: andrewyewcy@gmail.com
 
 ###################
 # IMPORT PACKAGES #
 ###################
-import joblib
 import numpy as np
 import pandas as pd
 import datetime as dt
 import streamlit as st
+
 import plotly.graph_objects as go
 import plotly.express as px
-# import pyautogui
-
-# create a function that sets the value in state back to an empty list
-def clear_multi():
-    st.session_state.multiselect = [2014,2015,2016,2017]
-    st.session_state.stations = "All Stations"
-    return
 
 ############################
 # CONFIGURE STREAMLIT PAGE #
@@ -34,6 +29,7 @@ st.set_page_config(
     }
 )
 
+# Reduce white space at top of dashboard
 st.markdown(
     """
         <style>
@@ -48,32 +44,51 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-#########################
-# Filters for Dashboard #
-#########################
+###############
+# IMPORT DATA #
+###############
 
+# Notes, data is a csv file generated from a MySQL query
 df = pd.read_csv(
     'analysis_data/location.csv',
     dtype = {"start_stn_code": "object"}
 )
 
+####################################
+# FILTERS FOR DASHBOARD IN SIDEBAR #
+####################################
+
+# To create a reset filter button, define a function that sets the value in state back to defined values for each key
+def clear_multi():
+    st.session_state.year = [2014,2015,2016,2017] # key_name is "year"
+    st.session_state.station = "All Stations"     # key_name is "station"
+    return
+
+# Define a sidebar to store all the filters
 with st.sidebar:
 
-    st.button("Reset filters", on_click = clear_multi)
+    # Create a button to reset all filters.
+    st.button(
+        "Reset filters", 
+        on_click = clear_multi # when button is click, reset session state to values defined in clear multi
+    )
 
+    # Create a multi-select tool for years
     selected_year = st.multiselect(
         "Select Year",
         options = ['All Years'] + df['yyyy'].unique().tolist(),
-        default = [2014,2015,2016,2017],
-        key = "multiselect"
+        default = [2014, 2015, 2016, 2017],
+        key = "year"
     )
-    
+
+    # Create a radio for stations
     selected_stations = st.radio(
         "Select Stations",
         options = ["All Stations", "Top 10 Stations"],
-        key = "stations"
+        key = "station"
     )
 
+    # Below section contains description of dashboard, contact info and links to creator profile
     st.write("**About this dashboard:**")
     st.write("This dashboard analyzes 35 million Bixi bicycle rental trips from 2014 to 2021 and is hosted on AWS as a Docker containerized application.")
     st.write("The data for the dashboard was obtained from [Bixi](https://bixi.com/en/open-data-2/).")
@@ -83,18 +98,25 @@ with st.sidebar:
     st.write("[Project Specific GitHub](https://github.com/andrewyewcy/velocipede)")
     st.write("[Website/Blog](https://andrewyewcy.com)")
 
+####################
+# APPLYING FILTERS #    
+####################
+
+# For stations
 if selected_stations == "All Stations":
     df = df
 else:
+    # If not all stations selected, rank stations by sum of trips started for each year.
     df['grouped_rides'] = df.groupby(
         by = ['yyyy', 'start_stn_code'])['rides'].transform('sum')
 
     df['rank'] = df.groupby(
         by = ['yyyy'])['grouped_rides'].rank("dense", ascending = False)
 
+    # Keep only the stations that are the top 10 stations for each year
     df = df.loc[df['rank'] <= 10]
 
-    
+# For year, if no stations were selected:
 if len(selected_year) == 0:
     st.subheader(
         body = "Please select at least 1 year.",
