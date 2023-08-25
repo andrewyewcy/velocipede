@@ -50,7 +50,7 @@ st.markdown(
 
 # Notes, data is a csv file generated from a MySQL query
 df = pd.read_csv(
-    'analysis_data/location.csv',
+    '12_processed_data/location.csv',
     dtype = {"start_stn_code": "object"}
 )
 

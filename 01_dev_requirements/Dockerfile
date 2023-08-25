@@ -3,15 +3,8 @@
 # docker build -t dev:01 .
 FROM jupyter/pyspark-notebook:2023-06-26
 
-# Run below line to clone the requirements file from github
-# RUN git clone https://github.com/streamlit/streamlit-example.git .
+COPY /. .
 
 #RUN sudo apt-get install python3-dev default-libmysqlclient-dev build-essential
-
-COPY requirements.txt ./requirements.txt
-COPY .aws ./.aws/
-
-COPY mysql-connector-j-8.0.33.jar ./mysql-connector-j-8.0.33.jar
-
 RUN conda install -c conda-forge mysqlclient
 RUN pip3 install -r requirements.txt

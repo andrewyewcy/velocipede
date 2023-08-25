@@ -3,20 +3,9 @@
 # docker build -t dev:01 .
 FROM python:3.11.4-slim
 
-WORKDIR /usr/src/app
-
 WORKDIR /app
 
-# Install git for cloning the repo
-# RUN apt-get update && apt-get install -y \
-#     build-essential \
-#     curl \
-#     software-properties-common \
-#     git \
-#     && rm -rf /var/lib/apt/lists/*
-# RUN git clone https://github.com/streamlit/streamlit-example.git .
-
-# COPY all from location of this Dockerfile into /app 
+# COPY requirements txt to /app 
 COPY /requirements.txt .
 
 # Tell package manager to install items in requirements.txt
