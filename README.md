@@ -5,7 +5,6 @@ VELOCIPEDE<br>
 Author: Andrew Yew<br>
 Date initiated: 2023-06-01<br>
 
-
 # Description <br> 
 As an avid cyclist, how are bikeshare networks performing across cities and what are possible ways to improve the bikeshare systems further. The first city for analysis is Montreal, where Bixi is the main bikeshare provider.This repository contains development notebooks detailing the process of developing dashboards and machine learning model using open source data on Bicycle rides.<br>
 
@@ -31,20 +30,26 @@ Format: Company (City, Country Code)<br>
 Details for all environments can be found within the `app_setp.yaml` and `dev_setup.yaml` files, with exact requirements listed in `01_dev_requirements` and `02_app_requirements` folders.
 
 # Table of Contents:<br>
-## 01_dev_requirements
+### 01_dev_requirements
+`Dockerfile` for docker-compose to build Docker container and `requirements.txt` listing python packages required to recreate the develop environment
 
+### 02_app_requirements
+`Dockerfile` for docker-compose to build Docker container and `requirements.txt` listing python packages required to recreate the production environment
 
-## notebook_functions
-Contains custom functions that are commonly used across different notebooks.
+### 12_processed_data
+Comma Separated Value (CSV) files containing the smaller(<100MB) ETL products from the raw data. These files are used to create visualizations and analysis.
 
-## terminal_functions
-Contains functions that are called through Terminal (shell), usually for touching up notebooks.
+### 21_notebooks
+Jupyter notebooks created while developing the dashboard. Each notebook represents one process and is roughly 1 blog post in the author's [blog](andrewyewcy.com). Examples of processes are: web-scraping, data ingestion, data visualization.
 
-## notebooks 01X
-Notebooks that detail data ingestiong and preprocessing.
+### 22_assets
+Contains the output from the notebooks, such as images, PowerPoint, Excel, and other files.
 
-## notebooks 02X
-Notebooks that detail data exploration and visualization.
+### 23_logs
+Contains log files from data ingestion or ETL processes for troubleshooting.
 
-## TESTX
-Test notebooks for specific functions, to be removed at project completion.
+### 24_testing
+Jupyter notebooks that were used in development and pending organization into 21_notebooks or deletion
+
+### streamlit_app.py
+Streamlit app that contains the interactive dashboard.
