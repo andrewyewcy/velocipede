@@ -1,4 +1,10 @@
-def plot_histogram(df, col, df_name):
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import time
+
+def plot_histogram(df, col, df_name, save_dir):
     """
     =======
     PURPOSE
@@ -16,6 +22,7 @@ def plot_histogram(df, col, df_name):
     df      : a pandas DataFrame that contains numerical columns.
     col     : a string containing the name of the numerical column for which to plot histograms. 
     df_name : a string containing the name of the input dataframe, used for saving image name
+    save_dir: a string containing the directory in which to save images
 
     ======
     OUTPUT
@@ -46,36 +53,39 @@ def plot_histogram(df, col, df_name):
     # Create subplot object with 1 row and 2 columns
     plt.subplots(1, 2, figsize = (15,5))
 
+    # Drop all rows with null values
+    plot_df = df.dropna(axis = 0, how = "any")
+    
     # Calculate the summary statistics for column
-    col_mean = np.mean(df[col].dropna())
-    col_median = np.median(df[col].dropna())
+    col_mean = np.mean(plot_df[col].dropna())
+    col_median = np.median(plot_df[col].dropna())
 
     # Plot first histogram to show distribution as is
     plt.subplot(1,2,1)
-    sns.histplot(data = df, x = col, stat = 'probability');
+    sns.histplot(data = plot_df, x = col, stat = 'probability');
     plt.axvline(col_mean, linestyle = '-', c = 'red', label = f"mean: {np.round(col_mean,2)}")
     plt.axvline(col_median, linestyle = '--', c = 'red', label = f"median: {np.round(col_median,2)}")
     plt.legend()
-    plt.title(f"Distribution for {col}", y = -0.05)
+    plt.title(f"Distribution for {col}", y = -0.20)
 
     # Calculate log of column
-    log_df = np.log(df[[col]].dropna()+1)
-    log_col_mean = np.mean(log_df[col])
-    log_col_median = np.median(log_df[col])
+    log_plot_df = np.log(plot_df[[col]].dropna()+1)
+    log_col_mean = np.mean(log_plot_df[col])
+    log_col_median = np.median(log_plot_df[col])
 
     # Plot second histogram to show LOG distribution
     plt.subplot(1,2,2)
-    sns.histplot(data = log_df, x = col, stat = 'probability');
+    sns.histplot(data = log_plot_df, x = col, stat = 'probability');
     plt.axvline(log_col_mean, linestyle = '-', c = 'red', label = f"mean: {np.round(log_col_mean,2)}")
     plt.axvline(log_col_median, linestyle = '--', c = 'red', label = f"median: {np.round(log_col_median,2)}")
     plt.xlabel(f"LOG {col}")
     plt.legend()
-    plt.title(f"LOG Distribution for {col}", y = -0.05)
+    plt.title(f"LOG Distribution for {col}", y = -0.20)
 
     sns.despine()
     plt.show()
     plt.savefig(
-        f"assets/images/histogram_{df_name}_{col}.png",
+        f"{save_dir}/{time.strftime('%Y%m%d-%H%M')}_histogram_{df_name}_{col}.png",
         format = "png",
         dpi = 300
         )
