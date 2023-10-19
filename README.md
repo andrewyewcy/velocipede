@@ -6,6 +6,8 @@ Contact: [LinkedIn](https://www.linkedin.com/in/andrewyewcy/) [Website](https://
 ## Brief Introduction
 As an avid cyclist, how are bicycle rental (bikeshare) networks performing and what are possible ways to improve the bikeshare systems further. In this study, 40 million [Bixi](https://bixi.com/en/) bicycle trips across 2014 and 2022 in the city of Montreal were analyzed to build a regressor that predicts the number of trips for each station. The geographical coordinates of each bicycle rental station were converted to similarity measures to cluster centres using KMeans and RBF Kernel. These similarity measures were then used to train a Random Forest regressor that was able to predict the percentage of annual trips for each station with a RMSE of 0.05608% with a 95% confidence interval of 0.04770% and 0.06336%. Practically, the model requires further tuning for stations with annual trips less than 33% percentile of annual trips, but, is able to accurately predict the annual number of trips for all stations as a whole with less than 5% difference to actuals.
 
+![030_regression_modelling_002.png](/22_assets/images/030_regression_modelling_002.png)
+
 ## Access to dashboard webapp
 Interactive dashboard hosted on an AWS EC2 instance: [Link](http://3.96.175.190:8501/)
 This dashboard visualizes the Bixi bicycle trips in the city of Montreal between 2014 and 2022.
@@ -64,7 +66,7 @@ Contains the trained machine learning models used throughout development and pro
 - `21_notebooks`
 Jupyter notebooks created while developing the dashboard. Each notebook represents one process and is roughly 1 blog post in the author's [blog](andrewyewcy.com). Examples of processes are: web-scraping, data ingestion, data visualization.
 
-- `22_assets``
+- `22_assets`
 Contains the output from the notebooks, such as images, PowerPoint, Excel, and other files.
 
 - `23_logs`
