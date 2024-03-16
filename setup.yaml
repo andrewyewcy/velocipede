@@ -3,10 +3,8 @@ version: '3.8'
 
 # Define services (docker containers) to run
 services:
-
-  streamlit-app:
-    build: ./02_app_requirements
-    restart: always
+  app:
+    build: .
     ports:
       - '8502:8501'
     volumes:
