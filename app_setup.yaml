@@ -8,6 +8,6 @@ services:
     build: ./02_app_requirements
     restart: always
     ports:
-      - '8501:8501'
+      - '8502:8501'
     volumes:
       - ${PWD}:/app
