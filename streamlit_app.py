@@ -327,7 +327,7 @@ else:
         # Set y-axis
         yaxis = dict(
             title          = f"Number of Bixi Trips (millions)",
-            titlefont_size = 14,
+            # font_size = 14,
             tickfont_size  = 12
         ),
 
@@ -347,7 +347,7 @@ else:
     col1.plotly_chart(
         fig,
         use_container_width = True,
-        sharing             = "streamlit"
+        # sharing             = "streamlit" # deprecated
     )
     
     ############################
@@ -445,7 +445,7 @@ else:
     col2.plotly_chart(
         fig,
         use_container_width = True,
-        sharing             = "streamlit"
+        # sharing             = "streamlit" # depecrated
     )
     
     ########################
@@ -556,7 +556,7 @@ else:
     col1.plotly_chart(
         fig,
         use_container_width = True,
-        sharing             = "streamlit"
+        # sharing             = "streamlit" # depecrated
     )
     
     ####################
@@ -640,5 +640,5 @@ else:
     col2.plotly_chart(
         fig,
         use_container_width = True,
-        sharing = "streamlit"
+        # sharing = "streamlit" # depecrated
     )
