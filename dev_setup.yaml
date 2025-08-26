@@ -1,52 +1,22 @@
-# Specify version of docker-compose for backwards compatability
-version: '3.8'
-
 # Define services (docker containers) to run
 services:
-  # Define a container named mysql to run MySQL DBMS
-  sql: 
-    image: mysql:8.0 # https://hub.docker.com/_/mysql
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: rootroot # rootroot was used in this case as an example
-    ports:
-      - '3306:3306'
-    volumes:
-      - documents_mysql_db_data:/var/lib/mysql # Local host directory (left) : directory in container (right)
-
-  # Define a container to run phpMyAdmin
-  php:
-    depends_on:
-      - sql
-    image: phpmyadmin:5.2 # https://hub.docker.com/_/phpmyadmin
-    restart: always
-    ports:
-      - '8080:80'
-    links:
-      - sql:db
-
-  # Define jupyter lab to run in same environment
-  dev:
-    depends_on:
-      - php
+  # Define jupyter lab
+  dev_jupyter:
     build: ./01_dev_requirements
+    environment:
+      - JUPYTER_TOKEN=
+      - GRANT_SUDO=yes
     restart: always
     ports:
       - '10000:8888' # Port to access notebook
-      - '4040:4040'  # Port to access SparkUI (Spark Monitoring and Instrumentation UI)
+      - '4040:4040'  # Port to access SparkUI
     volumes:
       - ${PWD}:/home/jovyan/work
 
-  app:
-    depends_on:
-      - dev
+  dev_app:
     build: ./02_app_requirements
+    restart: always
     ports:
-      - '8502:8501' # Port to access app
+      - '8501:8501'
     volumes:
       - ${PWD}:/app
-
-# Define Docker volumes to store data
-volumes:
-  documents_mysql_db_data: # Specify volume name
-    external: true     # Tell docker to refer to pre-created volumne that is outside this container's scope
